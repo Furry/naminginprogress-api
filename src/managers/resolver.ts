@@ -26,7 +26,6 @@ export class Resolver {
     constructor(_server: express.Express) {
         this.server = _server;
         this.load();
-        this.watch();
         this.bind(this.server);
 
         // Use our main routes
@@ -61,18 +60,18 @@ export class Resolver {
         }
     }
 
-    public watch() {
-        if (!this.watcher) {
-            this.watcher = fs.watch("./libraries", { recursive: true }, (eventType, filename) => {
-                if (filename.endsWith(".js")) {
-                    Logger.log(`${filename} changed. Reloading...`, "yellow");
-                    this.load();
-                }
-            });
-        } else {
-            Logger.log("Already watching libraries.", "yellow");
-        }
-    }
+    // public watch() {
+    //     if (!this.watcher) {
+    //         this.watcher = fs.watch("./libraries", { recursive: true }, (eventType, filename) => {
+    //             if (filename.endsWith(".js")) {
+    //                 Logger.log(`${filename} changed. Reloading...`, "yellow");
+    //                 this.load();
+    //             }
+    //         });
+    //     } else {
+    //         Logger.log("Already watching libraries.", "yellow");
+    //     }
+    // }
     
     public dynLoad(req: Request, res: Response, next: NextFunction) {
         // insure the authorization header hash matches the stored hash.
