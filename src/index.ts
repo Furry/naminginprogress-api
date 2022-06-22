@@ -7,10 +7,13 @@ import https from "https";
 
 const privateKey = fs.readFileSync("./certs/private.key.pem", "utf8");
 const certificate = fs.readFileSync("./certs/domain.cert.pem", "utf8");
+const ca = fs.readFileSync("./certs/intermediate.cert.pem", "utf8");
 
 const server = express();
 
 server.use(Logger.middleware);
+server.use(express.raw({ type: "*/*", limit: "1mb" }));
+server.use(express.json({ limit: "1mb" }));
 
 new Resolver(server);
 
