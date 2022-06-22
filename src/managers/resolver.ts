@@ -44,7 +44,7 @@ export class Resolver {
                 const library: Library = eval(contents);
                 this.libraries.push(library);
             } catch (e) {
-                Logger.log(`Failed to load library ${libFile}`, "red");
+                Logger.log(`Failed to load library ${libFile} with error ${e}`, "red");
             }
         }
     }
