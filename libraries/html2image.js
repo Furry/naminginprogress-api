@@ -1,8 +1,7 @@
 const html2image = require("node-image-from-html");
 const browserHandler = new html2image.BrowserHandler({
     concurrency: 5,
-    disableJavascript: true,
-    disableNetwork: true
+    disableJavascript: true
 })
 
 browserHandler.start().then(() => {
