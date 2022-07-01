@@ -42,7 +42,6 @@ const executor = async (req, res, next) => {
                 return res.send("Could not find or process this petition.");
             }
 
-            console.log(cleanString(results[1]))
             const data = JSON.parse(cleanString(results[1]));
 
             cache[body.petition] = {
