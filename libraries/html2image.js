@@ -15,7 +15,7 @@ const meta = {
     methods: ["post"],
     dependencies: ["node-html-to-image"]
 }
-
+    
 const executor = async (req, res, next) => {
     const content = req.body.toString("utf8");
     try {
