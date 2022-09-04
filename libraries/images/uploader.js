@@ -30,7 +30,7 @@ const executor = async (req, res, next) => {
 
     res.json({
         at: Date.now(),
-        url: `${domain}/s/${id}.${type}`
+        url: `http://${domain}/s/${id}.${type}`
     });
 }
 

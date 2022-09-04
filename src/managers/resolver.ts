@@ -29,7 +29,7 @@ export class Resolver {
         this.server = _server;
         this.load();
 
-        // Use our main routes
+        // Use our main routes  
         this.bindDefaults();
     }
 
