@@ -1,12 +1,14 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response, NextFunction, Router } from "express";
 
 import * as fs from "fs";
 import { Logger } from "./logger.js";
 import crypto from "crypto";
+import nodedir from "node-dir";
 
 export interface Library {
     executor: (req: Request, res: Response, next: NextFunction) => void;
-    meta: LibraryMeta
+    meta: LibraryMeta,
+    router?: Router
 }
 
 export interface LibraryMeta {
@@ -26,53 +28,52 @@ export class Resolver {
     constructor(_server: express.Express) {
         this.server = _server;
         this.load();
-        this.bind(this.server);
 
         // Use our main routes
-        this.server.post("/load", this.dynLoad);
-        this.server.get("/")
+        this.bindDefaults();
     }
 
     public load() {
         if (!fs.existsSync("./libraries"))
             fs.mkdirSync("./libraries");
 
-        // For each .js file in the libraries folder, load it.
-        for (const libFile of fs.readdirSync("./libraries").filter(f => f.endsWith(".js"))) {
-            const contents = fs.readFileSync(`./libraries/${libFile}`, "utf8");
-            try {
-                const library: Library = eval(contents);
-                this.libraries.push(library);
-            } catch (e) {
-                Logger.log(`Failed to load library ${libFile} with error ${e}`, "red");
+        // Use a file walker to collect every single file in the libraries directory.
+        nodedir.files("./libraries", (err, files) => {
+            for (const file of files) {
+                if (file.endsWith(".js")) {
+                    // Load the file.
+
+                    try {
+                        const library: Library = eval(fs.readFileSync(file, "utf8"));
+                        this.libraries.push(library);
+                    } catch (e) {
+                        Logger.log(`Failed to load library ${file} with error ${e}`, "red");
+                    }
+                }
             }
-        }
+
+            // Bind the libraries.
+            this.bind(this.server);
+        })
     }
 
     public bind(server: express.Router) {
         for (const library of this.libraries) {
             // server.use(library.meta.route, library.executor);
             let route = `/api/${library.meta.route}/${library.meta.name}`;
+            let handler = library.router || server;
+
             for (const method of library.meta.methods) {
-                (server as any)[method.toLowerCase()](route, library.executor);
+                (handler as any)[method.toLowerCase()](route, library.executor);
                 Logger.log(`Bound ${library.meta.name}\n\t| Methods: ${library.meta.methods.join(", ")}\n\t| Route: ${route}`, "green")
+            }
+
+            if (library.router) {
+                server.use("/", library.router);
             }
         }
     }
 
-    // public watch() {
-    //     if (!this.watcher) {
-    //         this.watcher = fs.watch("./libraries", { recursive: true }, (eventType, filename) => {
-    //             if (filename.endsWith(".js")) {
-    //                 Logger.log(`${filename} changed. Reloading...`, "yellow");
-    //                 this.load();
-    //             }
-    //         });
-    //     } else {
-    //         Logger.log("Already watching libraries.", "yellow");
-    //     }
-    // }
-    
     public dynLoad(req: Request, res: Response, next: NextFunction) {
         // insure the authorization header hash matches the stored hash.
         let calculatedHash = crypto.createHash("sha256").update(req.headers.authorization ? req.headers.authorization : "N/A").digest("hex");
@@ -99,5 +100,18 @@ export class Resolver {
             // Bind the library.
             this.bind(this.server);
         }
+    }
+
+    private bindDefaults() {
+        this.server.post("/load", this.dynLoad);
+
+        this.server.get("/s/:id", (req, res) => {
+            // Send the file in the ./static directory.
+            res.sendFile(req.params.id, { root: "./static/uploads" });
+        })
+
+        this.server.get("/", (req, res) => {
+            res.redirect("https://discord.gg/tamVs2Ujrf")
+        })
     }
 }
