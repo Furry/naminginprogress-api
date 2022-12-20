@@ -2,6 +2,7 @@ import { Resolver } from "./managers/resolver.js";
 import express from "express";
 import cors from "cors";
 import { Logger } from "./managers/logger.js";
+import path from "path";
 
 import fs from "fs";
 import https from "https";
@@ -24,9 +25,8 @@ server.listen(80, () => {
 })
 
 server.get("/upload", (req, res) => {
-    // Send ./web/upload.html
-    // It's back one directory from __dirname
-    res.sendFile(__dirname + "/../web/upload.html");
+    const finalPath = path.join(__dirname, "..", "web/upload.html");
+    res.sendFile(finalPath);
 })
 
 https.createServer({
