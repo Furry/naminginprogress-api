@@ -14,7 +14,7 @@
 
     <!-- Upload  -->
     <form id="file-upload-form" class="uploader">
-        <input id="file-upload" type="file" name="fileUpload" accept="image/*" />
+        <input id="file-upload" type="file" name="fileUpload" accept="*/*" />
 
         <label for="file-upload" id="file-drag">
             <img id="file-image" src="#" alt="Preview" class="hidden">
@@ -308,7 +308,7 @@
 
         function updateFileProgress(e) {
             var pBar = document.getElementById('file-progress');
-
+            console.log("HIT")
             if (e.lengthComputable) {
                 pBar.value = e.loaded;
             }
@@ -333,8 +333,13 @@
                         if (xhr.readyState == 4) {
                             // Everything is good!
 
-                            // progress.className = (xhr.status == 200 ? "success" : "failure");
-                            // document.location.reload(true);
+                            // Check to see if it is a success or not
+                            if (xhr.status == 200) {
+                                const json = JSON.parse(xhr.responseText)
+                                output(json['url']);
+                            } else {
+                                output('An error occurred while uploading the file.');
+                            }
                         }
                     };
 
