@@ -40,10 +40,13 @@ const executor = async (req, res, next) => {
 
     // Check if it's a image type.
     let newPath;
+    let label;
     if (!["png", "jpg", "jpeg", "gif", "webp"].includes(type)) {
-        newPath = path.join(__dirname, `../../static/uploads/${id}-${name}.${type}`);
+        label = `${id}-${name}.${type}`;
+        newPath = path.join(__dirname, `../../static/uploads/${label}`);
     } else {
-        newPath = path.join(__dirname, `../../static/uploads/${id}.${type}`);
+        label = `${id}.${type}`;
+        newPath = path.join(__dirname, `../../static/uploads/${label}`);
     }
 
     console.log("uploading to", newPath);
@@ -51,7 +54,7 @@ const executor = async (req, res, next) => {
 
     res.json({
         at: Date.now(),
-        url: `http://${domain}/s/${id}.${type}`
+        url: `http://${domain}/s/${label}`
     });
 }
 
