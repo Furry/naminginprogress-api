@@ -1,5 +1,6 @@
 import { Resolver } from "./managers/resolver.js";
 import express from "express";
+import cors from "cors";
 import { Logger } from "./managers/logger.js";
 
 import fs from "fs";
@@ -14,6 +15,7 @@ const server = express();
 server.use(Logger.middleware);
 server.use(express.raw({ type: "*/*", limit: "1mb" }));
 server.use(express.json({ limit: "1mb" }));
+server.use(cors());
 
 new Resolver(server);
 

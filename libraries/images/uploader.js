@@ -48,15 +48,11 @@ const router = () => {
     const router = express.Router();
 
     router.use(require("body-parser").raw({
-        limit: "50mb",
+        limit: "50gb",
         type: "*/*"
     }))
 
     return router;
-}
-
-const getFileType = (bytes) => {
-
 }
 
 module.exports = {
