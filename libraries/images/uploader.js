@@ -19,9 +19,13 @@ const executor = async (req, res, next) => {
     console.log(req.headers);
 
     // File Name
-    const name = req.headers["x-file-name"] || "unknown";
+    const name = req.headers["x-file-name"] ? req.headers["x-file-name"].replace(/\.[^/.]+$/, "") : "file";
+
     // File Type
-    const type = req.headers["x-file-type"] || mime.extension(req.headers["content-type"]);
+    const type = req.headers["x-file-type"] ?
+        req.headers["x-file-type"].replace(/image\//, "") :
+        req.headers["x-file-name"] ? req.headers["x-file-name"].split(".").pop() : mime.extension(req.headers["content-type"]);
+
 
     const domains = (req.headers["domains"] || "http://naminginprogress.com").split(",");
     const domain = domains[Math.floor(Math.random() * domains.length)];
@@ -36,6 +40,7 @@ const executor = async (req, res, next) => {
         newPath = path.join(__dirname, `../../static/uploads/${id}.${type}`);
     }
 
+    console.log("uploading to", newPath);
     fs.writeFileSync(newPath, data);
 
     res.json({
