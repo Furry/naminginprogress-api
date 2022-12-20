@@ -15,8 +15,11 @@ const executor = async (req, res, next) => {
     // Binary Data
     const data = Buffer.from(req.body);
 
+    // Print headers
+    console.log(req.headers);
+
     // File Name
-    const name = req.headers["x-file-name"];
+    const name = req.headers["x-file-name"] || "unknown";
     // File Type
     const type = req.headers["x-file-type"] || mime.extension(req.headers["content-type"]);
 
@@ -25,7 +28,14 @@ const executor = async (req, res, next) => {
     // Save the file in "/files/" + name + "." + type"
     const id = genId();
 
-    const newPath = path.join(__dirname, `../../static/uploads/${id}.${type}`);
+    // Check if it's a image type.
+    let newPath;
+    if (!["png", "jpg", "jpeg", "gif", "webp"].includes(type)) {
+        newPath = path.join(__dirname, `../../static/uploads/${id}-${name}.${type}`);
+    } else {
+        newPath = path.join(__dirname, `../../static/uploads/${id}.${type}`);
+    }
+
     fs.writeFileSync(newPath, data);
 
     res.json({
