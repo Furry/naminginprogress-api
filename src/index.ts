@@ -25,7 +25,7 @@ server.listen(80, () => {
 
 server.get("/upload", (req, res) => {
     // Send ./web/upload.html
-    res.sendFile(__dirname + "/web/upload.html");
+    res.sendFile(__dirname + "../web/upload.html");
 })
 
 https.createServer({
