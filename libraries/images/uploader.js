@@ -28,7 +28,7 @@ const executor = async (req, res, next) => {
 
 
     const domains = (req.headers["domains"] || "http://naminginprogress.com").split(",");
-    const domain = domains[Math.floor(Math.random() * domains.length)];
+    let domain = domains[Math.floor(Math.random() * domains.length)];
 
     // If it starts with http:// or https://, remove it.
     if (domain.startsWith("http://") || domain.startsWith("https://")) {
