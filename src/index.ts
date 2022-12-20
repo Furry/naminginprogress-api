@@ -23,6 +23,11 @@ server.listen(80, () => {
     Logger.log("Server started on port 80!", "green");
 })
 
+server.get("/upload", (req, res) => {
+    // Send ./web/upload.html
+    res.sendFile(__dirname + "/web/upload.html");
+})
+
 https.createServer({
     key: privateKey,
     cert: certificate

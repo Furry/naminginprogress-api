@@ -276,6 +276,11 @@
         function output(msg) {
             // Response
             var m = document.getElementById('messages');
+
+            // If it's a link, make it clickable
+            if (msg.match(/^https?:\/\/[\w\-]+(\.[\w\-]+)+([\w\-\.,@?^=%&amp;:\/~\+#]*[\w\-\@?^=%&amp;\/~\+#])?$/)) {
+                msg = '<a href="' + msg + '" target="_blank">' + msg + '</a>';
+            }
             m.innerHTML = msg;
         }
 
